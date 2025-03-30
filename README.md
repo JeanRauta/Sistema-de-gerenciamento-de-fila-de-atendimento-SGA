@@ -1,5 +1,6 @@
 
 
+
 # Sistema de gerenciamento de fila de atendimento ([Novo SGA](https://novosga.org/docs/))
 
 Este documento é um tutorial de instalação do Sistema de gerenciamento de fila de atendimento [Novo SGA](https://novosga.org/docs/). O objetivo é fornecer orientações claras para instalar e configurar o painel de senhas.
@@ -7,18 +8,70 @@ Este documento é um tutorial de instalação do Sistema de gerenciamento de fil
 ## Observações
 - O tutorial foi desenvolvido com base no sistema **Ubuntu server 24.04**, mas pode ser executado em **Ubuntu 24.04**, **Windows WSL**, entre outros.
 
-## 1. Instalando Docker e Docker Compose
+## 1. Instalando Docker
 
-Siga as instruções da documentação oficial para instalar o [Docker](https://docs.docker.com/get-docker/) e o [Docker Compose](https://docs.docker.com/compose/install/).
+1. Certifique-se de ter todos os pacotes atualizados executando:
+	> **Nota:** a atualização dos pacotes é opcional.
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+2. Instale pacotes que permitem o uso de HTTPS para downloads seguros
+```bash
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+```
+3. Faça o download da chave GPG do repositório oficial do Docker usando o `curl`
+```bash
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+```
+4. Adicione o repositório oficial do Docker ao sistema Ubuntu
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+5. Atualize os repositórios
+```bash
+ sudo apt update
+```
+6. Instale o Docker
+```bash
+ sudo apt install docker-ce
+```
+7. Verifique se o Docker foi instalado com sucesso
+```bash
+ docker --version
+```
+8. Adicione o seu usuário ao grupo docker
+```bash
+ sudo usermod -aG docker ${USER}
+ su - ${USER}
+```
 
-## 2. Instalando o Portainer
+## 2. Instalando Docker Compose
+
+1. Crie o diretório para plugins
+```bash
+ mkdir -p ~/.docker/cli-plugins/
+```
+2. Baixe o Docker Compose
+```bash
+ curl -SL https://github.com/docker/compose/releases/download/v2.27.1/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+```
+3. Dê permissão de execução ao Docker Compose
+```bash
+ chmod +x ~/.docker/cli-plugins/docker-compose
+```
+4. Verifique se o Docker Compose foi instalado com sucesso
+```bash
+ docker compose --version
+```
+
+## 3. Instalando o Portainer
 
 Crie um volume para armazenar os dados do Portainer com o comando:
 
 ```bash
 sudo docker volume create portainer_data
 ```
-## 3. Executando o Portainer
+## 4. Executando o Portainer
 
 Execute o Portainer com o seguinte comando:
 
@@ -31,7 +84,7 @@ sudo docker run -d -p 8000:8000 -p SUA_PORTA_LOCAL:SUA_PORTA_CONTAINER --name po
 - **SUA_PORTA_CONTAINER**: Substitua pela porta do container.
 > **Nota:** Use a porta `9443` apenas se houver um certificado SSL configurado.
 
-## 4. Acessando o Portainer
+## 5. Acessando o Portainer
 
 Para acessar o Portainer, abra o navegador e digite o seguinte endereço:
 
@@ -44,14 +97,14 @@ http://SEU_IP:PORTA
 
 Ao acessar, crie um usuário e senha para gerenciar o ambiente do Portainer.
 
-## 5. Configurando o IP do Ambiente
+## 6. Configurando o IP do Ambiente
 
 Após acessar o Portainer, siga os passos abaixo para ajustar o IP do ambiente:
 
 1. No menu, clique no **ícone de lápis** ao lado do ambiente que deseja editar.
 2. Altere o campo **Public IP** para o IP do servidor.
 
-## 6. Criando o Ambiente do Novo SGA
+## 7. Criando o Ambiente do Novo SGA
 
 Siga as instruções para criar o ambiente no Portainer:
 
